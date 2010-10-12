@@ -13,6 +13,7 @@ let etat_aux
 
 (**************************************************************************)
 let etatSuivant
+(**************************************************************************)
 (ft : string -> (string * (string * int)) list) (* fonction de transition *)
 (e : string) (* Un état donné *)
 (op : string) (* Opération à effectuer *)
