@@ -1,37 +1,57 @@
 (** Aetoile.ml **)
 
-
-(**************************************************************************)
+(**************************************************************************)	
 let etat_aux
 (**************************************************************************)
-(ft : string -> (string * (string * int)) list) (* fonction de transition *)
-(e : string) (* Un état donné *)
-(op : string) (* Opération à effectuer *)
-(**************************************************************************)
+(ft : ('a -> ('b * ('a * int)) list))   	  (** Fonction de transition **)
+(e : 'a)									  (** Etat ********************)
+(op : 'b)									  (** Opération ***************)
  = let res = ft e in List.filter (fun (x,(l,v)) -> x = op) res;;
-	
-
+ 
+ 
 (**************************************************************************)
 let etatSuivant
 (**************************************************************************)
-(ft : string -> (string * (string * int)) list) (* fonction de transition *)
-(e : string) (* Un état donné *)
-(op : string) (* Opération à effectuer *)
+(ft : ('a -> ('b * ('a * int)) list))         (** Fonction de transition **)
+(e : 'a)   							          (** Etat ********************)
+(op : 'b) 							          (* Opération à effectuer ****)
+: 'a
 (**************************************************************************)
 = let n = etat_aux ft e op in match n with
 [] -> failwith "Erreur etat suivant"
 |(x,(s,v))::r -> s;; 
 
-etatSuivant g1.opPoss "B" "b";;
+(** Exmple :   etatSuivant g1.opPoss "B" "b";;  **)
 
-(**************************************************************************	
+(**************************************************************************)	
 let coutOp
-(ft : string -> (string * (string * int)) list) (* fonction de transition *)
-(e : string) (* Un état donné *)
-(op : string) (* Opération à effectuer *)
-(**************************************************************************
+(**************************************************************************)	
+(ft : ('a -> ('b * ('a * int)) list))  		  (** Fonction de transition **)
+(e : 'a)   							   		  (** Etat ********************)
+(op : 'b) 							   		  (* Opération à effectuer ****)
+: int
+(**************************************************************************)
 = let n = etat_aux ft e op in match n with
-|[] -> failwith "Erreur etat suivant"
+|[] -> failwith "Erreur etat coutOp"
 |(x,(s,v))::r -> v;; 
 
-coutOp g1.opPoss "B" "b";;
+(** Exemple :    coutOp g1.opPoss "B" "b";; **)
+
+
+(** Chemins **)
+
+(**************************************************************************)
+let rec etatFinal
+(ft : ('a -> ('b * ('a * int)) list))  		  (** Fonction de transition **)
+(e : 'a)   							   		  (** Etat ********************)
+(op : 'b list) 						   		  (* Opération à effectuer ****)
+: 'a
+= match op with
+[] -> failwith "Erreur etat final"
+| a::r -> let s = etatSuivant ft e a in etatFinal ft e s;;
+
+
+
+
+
+
