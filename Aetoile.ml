@@ -91,7 +91,7 @@ let creerChemin
 	ops = op;
 	final = etatFinal ft e op;
 	cout = coutParcouru ft e op;
-	estim = h e;
+	estim = h (etatFinal ft e op);
 	};;
 	
-# let f = creerChemin g1.opPoss g1.hEtat "A" ["b";"h";"h"];
+(** Exemple:	 let f = creerChemin g1.opPoss g1.hEtat "A" ["b";"h";"h"];; **)
