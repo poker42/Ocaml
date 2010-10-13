@@ -46,12 +46,27 @@ let rec etatFinal
 (e : 'a)   							   		  (** Etat ********************)
 (op : 'b list) 						   		  (* Opération à effectuer ****)
 : 'a
+(**************************************************************************)
 = match op with
-[] -> failwith "Erreur etat final"
-| a::r -> let s = etatSuivant ft e a in etatFinal ft e s;;
+[] -> e
+| a::r -> let s = etatSuivant ft e a in etatFinal ft s r;;
+
+(** Exemple:      etatFinal g1.opPoss "A" ["b";"h";"h"];; **)
 
 
+(**************************************************************************)
+let rec coutParcouru
+(ft : ('a -> ('b * ('a * int)) list))  		  (** Fonction de transition **)
+(e : 'a)   							   		  (** Etat ********************)
+(op : 'b list) 						   		  (* Opération à effectuer ****)
+: int
+= match op with
+[] -> 0
+| a::q -> let s = etatSuivant ft e a
+	in let r = coutOp ft s a
+		in r+coutParcouru ft s q;;
 
+coutParcouru g1.opPoss "A" ["b";"h";"h"];;
 
 
 
