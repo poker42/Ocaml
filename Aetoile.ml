@@ -60,13 +60,38 @@ let rec coutParcouru
 (e : 'a)   							   		  (** Etat ********************)
 (op : 'b list) 						   		  (* Opération à effectuer ****)
 : int
+(**************************************************************************)
 = match op with
 [] -> 0
 | a::q -> let s = etatSuivant ft e a
-	in let r = coutOp ft s a
+	in let r = coutOp ft e a
 		in r+coutParcouru ft s q;;
 
-coutParcouru g1.opPoss "A" ["b";"h";"h"];;
+(** Exemple:		coutParcouru g1.opPoss "A" ["b";"h";"h"];;  *)
 
+(**************************************************************************)
+type ('etatT, 'opT) chemin =
+{ 
+	depart : 'etatT;
+	ops    : 'opT list;
+	final  : 'etatT;
+	cout   :  int;
+	estim  :  int };;
 
-
+(**************************************************************************)
+let creerChemin
+(ft : ('a -> ('b * ('a * int)) list))  		  (** Fonction de transition **)
+(h  : ('a -> int))
+(e  : 'a)
+(op : 'b list)
+:('a,'b) chemin
+=
+{
+	depart = e;
+	ops = op;
+	final = etatFinal ft e op;
+	cout = coutParcouru ft e op;
+	estim = h e;
+	};;
+	
+# let f = creerChemin g1.opPoss g1.hEtat "A" ["b";"h";"h"];
