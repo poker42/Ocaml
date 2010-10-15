@@ -1,11 +1,9 @@
-ï»¿(** Aetoile.ml **)
-
 (**************************************************************************)	
 let etat_aux
 (**************************************************************************)
 (ft : ('a -> ('b * ('a * int)) list))   	  (** Fonction de transition **)
 (e : 'a)									  (** Etat ********************)
-(op : 'b)									  (** Opération ***************)
+(op : 'b)									  (** OpÃ©ration Ã  effectuer ***************)
  = let res = ft e in List.filter (fun (x,(l,v)) -> x = op) res;;
  
  
@@ -14,7 +12,7 @@ let etatSuivant
 (**************************************************************************)
 (ft : ('a -> ('b * ('a * int)) list))         (** Fonction de transition **)
 (e : 'a)   							          (** Etat ********************)
-(op : 'b) 							          (* Opération à effectuer ****)
+(op : 'b) 							          (* OpÃ©ration Ã  effectuer ****)
 : 'a
 (**************************************************************************)
 = let n = etat_aux ft e op in match n with
@@ -28,7 +26,7 @@ let coutOp
 (**************************************************************************)	
 (ft : ('a -> ('b * ('a * int)) list))  		  (** Fonction de transition **)
 (e : 'a)   							   		  (** Etat ********************)
-(op : 'b) 							   		  (* Opération à effectuer ****)
+(op : 'b) 							   		  (* OpÃ©ration Ã  effectuer ****)
 : int
 (**************************************************************************)
 = let n = etat_aux ft e op in match n with
@@ -42,9 +40,10 @@ let coutOp
 
 (**************************************************************************)
 let rec etatFinal
+(**************************************************************************)
 (ft : ('a -> ('b * ('a * int)) list))  		  (** Fonction de transition **)
 (e : 'a)   							   		  (** Etat ********************)
-(op : 'b list) 						   		  (* Opération à effectuer ****)
+(op : 'b list) 						   		  (* OpÃ©ration Ã  effectuer ****)
 : 'a
 (**************************************************************************)
 = match op with
@@ -56,9 +55,10 @@ let rec etatFinal
 
 (**************************************************************************)
 let rec coutParcouru
+(**************************************************************************)
 (ft : ('a -> ('b * ('a * int)) list))  		  (** Fonction de transition **)
 (e : 'a)   							   		  (** Etat ********************)
-(op : 'b list) 						   		  (* Opération à effectuer ****)
+(op : 'b list) 						   		  (* OpÃ©ration Ã  effectuer ****)
 : int
 (**************************************************************************)
 = match op with
@@ -76,16 +76,18 @@ type ('etatT, 'opT) chemin =
 	ops    : 'opT list;
 	final  : 'etatT;
 	cout   :  int;
-	estim  :  int };;
+	estim  :  int; };;
 
 	
 (**************************************************************************)
 let creerChemin
+(**************************************************************************)
 (ft : ('a -> ('b * ('a * int)) list))  		  (** Fonction de transition **)
 (h  : ('a -> int))
 (e  : 'a)
 (op : 'b list)
 :('a,'b) chemin
+(**************************************************************************)
 =
 {
 	depart = e;
@@ -94,5 +96,65 @@ let creerChemin
 	cout = coutParcouru ft e op;
 	estim = h (etatFinal ft e op);
 	};;
+		
+(** Exemple:
+	let ch1 = creerChemin g1.opPoss g1.hEtat "A" ["b";"h";"h"]
+	let ch2 = creerChemin g1.opPoss g1.hEtat "A" ["h";"b"]
+	let ch3 = creerChemin g1.opPoss g1.hEtat "A" ["b"];;
+	**)
+
+
+(**************************************************************************)	
+(* Fonction auxiliaire pour afficherChemin								  *)
+(**************************************************************************)
+let rec aff_aux ft d op cu ct = match op with
+[] -> print_string d; print_string " "; print_string "cout: ";print_int cu; print_string " estim: "; print_int ct; print_newline();
+| a::b -> let s = etatSuivant ft d a in begin 
+print_string d; print_string " "; print_string a; print_string " "; end; aff_aux ft s b cu ct;;
 	
-(** Exemple:	 let f = creerChemin g1.opPoss g1.hEtat "A" ["b";"h";"h"];; **)
+	
+(**************************************************************************)
+let afficherChemin
+(**************************************************************************)
+(fpe : 'a -> unit)
+(fpo : 'b -> unit)
+(ft  : ('a -> ('b * ('a * int)) list))
+(ch  : ('a,'b) chemin)
+(**************************************************************************)
+= aff_aux ft ch.depart ch.ops ch.cout ch.estim;; 
+
+(*	afficherChemin print_string print_string g1.opPoss ch1;; *)
+
+
+
+(**************************************************************************)
+let supprimerEtat
+(**************************************************************************)
+(e : 'a)
+(lch : ('a,'b) chemin list)
+: ('a,'b) chemin list
+(**************************************************************************)
+= List.filter (fun x -> x.final <> e) lch;;
+
+
+
+(**************************************************************************)
+let rec insererChemin
+(**************************************************************************)
+(ch1 : ('a,'b) chemin )
+(lch : ('a,'b) chemin list)
+: ('a,'b) chemin list
+(**************************************************************************)
+= 
+match lch with 
+[] -> [ch1]
+| a::r ->  if (ch1.cout + ch1.estim)<(a.cout + a.estim) 
+			then ch1::lch
+			else a::insererChemin ch1 r;;
+
+
+let ch4 = creerChemin g1.opPoss g1.hEtat "A" ["h";"h"];;
+let ch5 = creerChemin g1.opPoss g1.hEtat "A" ["b";"h"];;
+(*   insererChemin ch4 lch;;    *)
+
+
