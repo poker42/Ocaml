@@ -1,4 +1,4 @@
-(** Aetoile.ml **)
+﻿(** Aetoile.ml **)
 
 (**************************************************************************)	
 let etat_aux
@@ -78,6 +78,7 @@ type ('etatT, 'opT) chemin =
 	cout   :  int;
 	estim  :  int };;
 
+	
 (**************************************************************************)
 let creerChemin
 (ft : ('a -> ('b * ('a * int)) list))  		  (** Fonction de transition **)
