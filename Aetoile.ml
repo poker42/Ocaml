@@ -97,11 +97,10 @@ let creerChemin
 	estim = h (etatFinal ft e op);
 	};;
 		
-(** Exemple:
-	let ch1 = creerChemin g1.opPoss g1.hEtat "A" ["b";"h";"h"]
-	let ch2 = creerChemin g1.opPoss g1.hEtat "A" ["h";"b"]
+(** Exemple: **)
+	let ch1 = creerChemin g1.opPoss g1.hEtat "A" ["b";"h";"h"];;
+	let ch2 = creerChemin g1.opPoss g1.hEtat "A" ["h";"b"];;
 	let ch3 = creerChemin g1.opPoss g1.hEtat "A" ["b"];;
-	**)
 
 
 (**************************************************************************)	
@@ -139,7 +138,7 @@ let supprimerEtat
 
 
 (**************************************************************************)
-let rec insererChemin
+let rec insererChemin_aux
 (**************************************************************************)
 (ch1 : ('a,'b) chemin )
 (lch : ('a,'b) chemin list)
@@ -150,11 +149,28 @@ match lch with
 [] -> [ch1]
 | a::r ->  if (ch1.cout + ch1.estim)<(a.cout + a.estim) 
 			then ch1::lch
-			else a::insererChemin ch1 r;;
+			else a::insererChemin_aux ch1 r;;
 
-
+			
 let ch4 = creerChemin g1.opPoss g1.hEtat "A" ["h";"h"];;
 let ch5 = creerChemin g1.opPoss g1.hEtat "A" ["b";"h"];;
-(*   insererChemin ch4 lch;;    *)
+
+(** Exemple : 		insererChemin ch5 lch1;;  *)
+
+(** (Filtre les chemins avec le même élément final 
+	ET un coût+estim inférieur ou égal à l'élément à inserer)
+    OU avec un état final différent **)
+let suppr_doublon e lch = List.filter (fun x -> x.final <> e.final || (x.final = e.final && (x.cout+x.estim)<=(e.cout+e.estim))) lch;;
+
+(**************************************************************************)
+let insererChemin e lch = suppr_doublon e (insererChemin_aux e lch);;
+(**************************************************************************)
 
 
+(**************************************************************************)
+let creerFils
+(ft : ('a -> ('b * ('a * int)) list))  
+(fh : ('a -> int)
+(ch : ('a,'b) chemin
+: ('a,'b) chemin list
+= 
