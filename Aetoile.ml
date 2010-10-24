@@ -166,11 +166,62 @@ let suppr_doublon e lch = List.filter (fun x -> x.final <> e.final || (x.final =
 let insererChemin e lch = suppr_doublon e (insererChemin_aux e lch);;
 (**************************************************************************)
 
+(**************************************************************************)
+(* obtenir l'état suivant
+	obtenir le chemin qui va jusqu'à cet état
+*)
+(**************************************************************************)
+
+let rec fils li = match li with
+[] -> []
+| a::b -> a::fils b;;
+
+let rec filtrer m = match m with
+[] -> []
+| (a,(b,c))::r -> a::filtrer r;;
+
+let getChemins
+(ft : ('a -> ('b * ('a * int)) list))  
+(fh : ('a -> int))
+(ch : ('a,'b) chemin)
+= let r = fils (filtrer (ft ch.final)) in r;;
 
 (**************************************************************************)
-let creerFils
-(ft : ('a -> ('b * ('a * int)) list))  
-(fh : ('a -> int)
-(ch : ('a,'b) chemin
-: ('a,'b) chemin list
-= 
+let rec creerFils2 ft fh ch li = let m = ch.ops in match li with
+[] -> []
+| a::b -> (creerChemin ft fh ch.depart (m@a::[]))::creerFils2 ft fh ch b;;
+
+
+(**************************************************************************)
+type 'a etatCout =
+{ etat: 'a;
+  coutreel : int};;
+(**************************************************************************)
+
+
+let simp1 = [{etat="C";coutreel=3};{etat="D";coutreel=11};{etat="E";coutreel=8}];;
+(* List.filter (fun x -> testSimplif ch5 x) simp2;;  *)
+(**************************************************************************)
+
+(** Test si le chemin est présent ou absent et a un chemin inférieur à celui dans la liste
+Si oui, on renvoie true, sinon on renvoie false **)
+let rec test2 ch res = match res with
+[] -> false
+| e::b -> if (ch.final <> e.etat ||(ch.final = e.etat && (ch.cout)<(e.coutreel))) then true else test2 ch b;;
+
+let returnTestSimplif ch lvus = let res = List.filter (fun x -> testSimplif ch x) lvus in if test2 ch res then true else false;;
+
+let interetSimplif ch lvus = let res = returnTestSimplif ch lvus in if res then (true, List.filter (fun x -> testSimplif ch x) lvus) else (false,List.filter (fun x -> testSimplif ch x) lvus);;
+
+
+let testSimplif ch e = if (ch.final <> e.etat || (ch.final = e.etat && (ch.cout)>(e.coutreel))) then true else false;;
+
+
+
+let creerSimplif b li = if b then (true, li) else (false, li);;
+(*
+	returnTestSimplif ch5 [{etat="C";coutreel=3};{etat="D";coutreel=11};{etat="E";coutreel=8}];;
+	returnTestSimplif ch5 [{etat="C";coutreel=3};{etat="D";coutreel=5};{etat="E";coutreel=8}];;
+ interetSimplif ch5 [{etat="C";coutreel=3};{etat="D";coutreel=11};{etat="E";coutreel=8}];;
+	interetSimplif ch5 [{etat="C";coutreel=3};{etat="D";coutreel=5};{etat="E";coutreel=8}];;
+ *)
