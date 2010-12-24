@@ -1,3 +1,5 @@
+(*fglkflgkflgkflgkf*)
+
 (**************************************************************************)	
 let etat_aux
 (**************************************************************************)
@@ -187,9 +189,9 @@ let getChemins
 = let r = fils (filtrer (ft ch.final)) in r;;
 
 (**************************************************************************)
-let rec creerFils2 ft fh ch li = let m = ch.ops in match li with
+let rec creerFils ft fh ch li = let m = ch.ops in match li with
 [] -> []
-| a::b -> (creerChemin ft fh ch.depart (m@a::[]))::creerFils2 ft fh ch b;;
+| a::b -> (creerChemin ft fh ch.depart (m@a::[]))::creerFils ft fh ch b;;
 
 
 (**************************************************************************)
@@ -203,25 +205,80 @@ let simp1 = [{etat="C";coutreel=3};{etat="D";coutreel=11};{etat="E";coutreel=8}]
 (* List.filter (fun x -> testSimplif ch5 x) simp2;;  *)
 (**************************************************************************)
 
-(** Test si le chemin est présent ou absent et a un chemin inférieur à celui dans la liste
-Si oui, on renvoie true, sinon on renvoie false **)
-let rec test2 ch res = match res with
-[] -> false
-| e::b -> if (ch.final <> e.etat ||(ch.final = e.etat && (ch.cout)<(e.coutreel))) then true else test2 ch b;;
+(***************************************************************)
+let rec interetSimplif
+(***************************************************************)
+(ch : ('a, 'b) chemin)
+(lvus : 'a etatCout list)
+(***************************************************************)
+(* Retourne si le chemin est interessant par rapport aux       *)
+(* chemins vus et retourne la liste de chemins vus mise a jour *)
+(***************************************************************)
+: bool * 'a etatCout list
+(***************************************************************)
+= match lvus with
+  [] -> (true, [])
+| (ec::r) -> let (b, l) = (interetSimplif ch r) in
+	if (ch.final = ec.etat) then
+		if (ch.cout < ec.coutreel) then
+			(true && b, l)
+		else
+			(false, ec::l)
+	else
+		(true && b, ec::l);;
+(***************************************************************)
 
-let returnTestSimplif ch lvus = let res = List.filter (fun x -> testSimplif ch x) lvus in if test2 ch res then true else false;;
-
-let interetSimplif ch lvus = let res = returnTestSimplif ch lvus in if res then (true, List.filter (fun x -> testSimplif ch x) lvus) else (false,List.filter (fun x -> testSimplif ch x) lvus);;
-
-
-let testSimplif ch e = if (ch.final <> e.etat || (ch.final = e.etat && (ch.cout)>(e.coutreel))) then true else false;;
-
-
-
-let creerSimplif b li = if b then (true, li) else (false, li);;
 (*
-	returnTestSimplif ch5 [{etat="C";coutreel=3};{etat="D";coutreel=11};{etat="E";coutreel=8}];;
-	returnTestSimplif ch5 [{etat="C";coutreel=3};{etat="D";coutreel=5};{etat="E";coutreel=8}];;
+
  interetSimplif ch5 [{etat="C";coutreel=3};{etat="D";coutreel=11};{etat="E";coutreel=8}];;
 	interetSimplif ch5 [{etat="C";coutreel=3};{etat="D";coutreel=5};{etat="E";coutreel=8}];;
  *)
+ 
+
+(** retourne le couple formé de la liste d'attente latt
+dans laquelle on a inséré les chemins intéressants de lch
+et la liste lvus qui a pu subir des suppressions lors de test
+d'intérêts
+
+Soit la liste d'attente et la liste vue
+*)
+(***************************************************************)
+let rec insererListeChemins
+(***************************************************************)
+(lch: ('a,'b) chemin list)
+(latt: ('a,'b) chemin list)
+(lvus: 'a etatCout list)
+: ('a,'b) chemin list * 'a etatCout list
+(***************************************************************)
+= (lch, lvus);;
+
+
+let list_simp l = match l with
+(a, []) -> []
+| (a, b) -> b;;
+
+let rec insererListeChemins lch latt lvus = match lch with
+[] -> ([],[])
+| a::r -> let (b,l) = (insererListeChemins r latt lvus) in
+((insererChemin a latt), list_simp(interetSimplif a lvus)@l);;
+		
+
+
+	(***************************************************************)let rec aEtoile teb ft fh fA lvus = match fA with
+[] -> failwith "pas de solution"
+| a::r -> if(teb a) then a else
+
+
+let rec maux 
+
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	
+ 
